@@ -4,9 +4,11 @@ import '../flutter_flow/flutter_flow_theme.dart';
 import '../flutter_flow/flutter_flow_util.dart';
 import '../flutter_flow/flutter_flow_widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import 'register_model.dart';
+export 'register_model.dart';
 
 class RegisterWidget extends StatefulWidget {
   const RegisterWidget({Key? key}) : super(key: key);
@@ -16,33 +18,28 @@ class RegisterWidget extends StatefulWidget {
 }
 
 class _RegisterWidgetState extends State<RegisterWidget> {
-  TextEditingController? emailAddressCreateController;
-  TextEditingController? passwordCreateController;
-  late bool passwordCreateVisibility;
-  TextEditingController? emailAddressLoginController;
-  TextEditingController? passwordLoginController;
-  late bool passwordLoginVisibility;
-  final _unfocusNode = FocusNode();
+  late RegisterModel _model;
+
   final scaffoldKey = GlobalKey<ScaffoldState>();
+  final _unfocusNode = FocusNode();
 
   @override
   void initState() {
     super.initState();
-    emailAddressCreateController = TextEditingController();
-    passwordCreateController = TextEditingController();
-    passwordCreateVisibility = false;
-    emailAddressLoginController = TextEditingController();
-    passwordLoginController = TextEditingController();
-    passwordLoginVisibility = false;
+    _model = createModel(context, () => RegisterModel());
+
+    _model.emailAddressLoginController = TextEditingController();
+    _model.passwordLoginController = TextEditingController();
+    _model.emailAddressCreateController = TextEditingController();
+    _model.passwordCreateController = TextEditingController();
+    WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
   }
 
   @override
   void dispose() {
+    _model.dispose();
+
     _unfocusNode.dispose();
-    emailAddressCreateController?.dispose();
-    passwordCreateController?.dispose();
-    emailAddressLoginController?.dispose();
-    passwordLoginController?.dispose();
     super.dispose();
   }
 
@@ -58,17 +55,11 @@ class _RegisterWidgetState extends State<RegisterWidget> {
           children: [
             Padding(
               padding: EdgeInsetsDirectional.fromSTEB(0, 94, 0, 60),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SvgPicture.asset(
-                    'assets/images/Cowriter_Logo.svg',
-                    width: 160,
-                    height: 100,
-                    fit: BoxFit.contain,
-                  ),
-                ],
+              child: Image.asset(
+                'assets/images/Cowriter_Logo.png',
+                width: 160,
+                height: 100,
+                fit: BoxFit.contain,
               ),
             ),
             Expanded(
@@ -107,7 +98,8 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                                   padding: EdgeInsetsDirectional.fromSTEB(
                                       20, 20, 20, 0),
                                   child: TextFormField(
-                                    controller: emailAddressLoginController,
+                                    controller:
+                                        _model.emailAddressLoginController,
                                     autofocus: true,
                                     obscureText: false,
                                     decoration: InputDecoration(
@@ -173,14 +165,18 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                                           fontWeight: FontWeight.normal,
                                         ),
                                     maxLines: null,
+                                    validator: _model
+                                        .emailAddressLoginControllerValidator
+                                        .asValidator(context),
                                   ),
                                 ),
                                 Padding(
                                   padding: EdgeInsetsDirectional.fromSTEB(
                                       20, 12, 20, 0),
                                   child: TextFormField(
-                                    controller: passwordLoginController,
-                                    obscureText: !passwordLoginVisibility,
+                                    controller: _model.passwordLoginController,
+                                    obscureText:
+                                        !_model.passwordLoginVisibility,
                                     decoration: InputDecoration(
                                       labelText: 'Password',
                                       labelStyle: FlutterFlowTheme.of(context)
@@ -235,13 +231,13 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                                               20, 24, 20, 24),
                                       suffixIcon: InkWell(
                                         onTap: () => setState(
-                                          () => passwordLoginVisibility =
-                                              !passwordLoginVisibility,
+                                          () => _model.passwordLoginVisibility =
+                                              !_model.passwordLoginVisibility,
                                         ),
                                         focusNode:
                                             FocusNode(skipTraversal: true),
                                         child: Icon(
-                                          passwordLoginVisibility
+                                          _model.passwordLoginVisibility
                                               ? Icons.visibility_outlined
                                               : Icons.visibility_off_outlined,
                                           color: Color(0xFF57636C),
@@ -258,6 +254,9 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                                           fontSize: 14,
                                           fontWeight: FontWeight.normal,
                                         ),
+                                    validator: _model
+                                        .passwordLoginControllerValidator
+                                        .asValidator(context),
                                   ),
                                 ),
                                 Padding(
@@ -269,8 +268,8 @@ class _RegisterWidgetState extends State<RegisterWidget> {
 
                                       final user = await signInWithEmail(
                                         context,
-                                        emailAddressLoginController!.text,
-                                        passwordLoginController!.text,
+                                        _model.emailAddressLoginController.text,
+                                        _model.passwordLoginController.text,
                                       );
                                       if (user == null) {
                                         return;
@@ -287,8 +286,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                                           .subtitle2
                                           .override(
                                             fontFamily: 'Outfit',
-                                            color: FlutterFlowTheme.of(context)
-                                                .primaryBtnText,
+                                            color: Colors.white,
                                             fontSize: 16,
                                             fontWeight: FontWeight.normal,
                                           ),
@@ -316,8 +314,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                                           .subtitle2
                                           .override(
                                             fontFamily: 'Outfit',
-                                            color: FlutterFlowTheme.of(context)
-                                                .primaryBtnText,
+                                            color: Colors.white,
                                             fontSize: 16,
                                             fontWeight: FontWeight.normal,
                                           ),
@@ -372,8 +369,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                                             .secondaryColor,
                                         icon: FaIcon(
                                           FontAwesomeIcons.google,
-                                          color: FlutterFlowTheme.of(context)
-                                              .primaryBtnText,
+                                          color: Colors.white,
                                           size: 24,
                                         ),
                                         onPressed: () async {
@@ -397,8 +393,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                                             .secondaryColor,
                                         icon: FaIcon(
                                           FontAwesomeIcons.twitter,
-                                          color: FlutterFlowTheme.of(context)
-                                              .primaryBtnText,
+                                          color: Colors.white,
                                           size: 24,
                                         ),
                                         onPressed: () async {
@@ -423,8 +418,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                                             .secondaryColor,
                                         icon: FaIcon(
                                           FontAwesomeIcons.facebookF,
-                                          color: FlutterFlowTheme.of(context)
-                                              .primaryBtnText,
+                                          color: Colors.white,
                                           size: 24,
                                         ),
                                         onPressed: () async {
@@ -456,7 +450,8 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                                   padding: EdgeInsetsDirectional.fromSTEB(
                                       20, 20, 20, 0),
                                   child: TextFormField(
-                                    controller: emailAddressCreateController,
+                                    controller:
+                                        _model.emailAddressCreateController,
                                     obscureText: false,
                                     decoration: InputDecoration(
                                       labelText: 'Email Address',
@@ -506,8 +501,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                                         borderRadius: BorderRadius.circular(8),
                                       ),
                                       filled: true,
-                                      fillColor: FlutterFlowTheme.of(context)
-                                          .primaryBtnText,
+                                      fillColor: Colors.white,
                                       contentPadding:
                                           EdgeInsetsDirectional.fromSTEB(
                                               20, 24, 20, 24),
@@ -522,14 +516,18 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                                           fontWeight: FontWeight.normal,
                                         ),
                                     maxLines: null,
+                                    validator: _model
+                                        .emailAddressCreateControllerValidator
+                                        .asValidator(context),
                                   ),
                                 ),
                                 Padding(
                                   padding: EdgeInsetsDirectional.fromSTEB(
                                       20, 12, 20, 0),
                                   child: TextFormField(
-                                    controller: passwordCreateController,
-                                    obscureText: !passwordCreateVisibility,
+                                    controller: _model.passwordCreateController,
+                                    obscureText:
+                                        !_model.passwordCreateVisibility,
                                     decoration: InputDecoration(
                                       labelText: 'Password',
                                       labelStyle: FlutterFlowTheme.of(context)
@@ -578,20 +576,20 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                                         borderRadius: BorderRadius.circular(8),
                                       ),
                                       filled: true,
-                                      fillColor: FlutterFlowTheme.of(context)
-                                          .primaryBtnText,
+                                      fillColor: Colors.white,
                                       contentPadding:
                                           EdgeInsetsDirectional.fromSTEB(
                                               20, 24, 20, 24),
                                       suffixIcon: InkWell(
                                         onTap: () => setState(
-                                          () => passwordCreateVisibility =
-                                              !passwordCreateVisibility,
+                                          () => _model
+                                                  .passwordCreateVisibility =
+                                              !_model.passwordCreateVisibility,
                                         ),
                                         focusNode:
                                             FocusNode(skipTraversal: true),
                                         child: Icon(
-                                          passwordCreateVisibility
+                                          _model.passwordCreateVisibility
                                               ? Icons.visibility_outlined
                                               : Icons.visibility_off_outlined,
                                           color: Color(0xFF57636C),
@@ -608,6 +606,9 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                                           fontSize: 14,
                                           fontWeight: FontWeight.normal,
                                         ),
+                                    validator: _model
+                                        .passwordCreateControllerValidator
+                                        .asValidator(context),
                                   ),
                                 ),
                                 Padding(
@@ -619,8 +620,9 @@ class _RegisterWidgetState extends State<RegisterWidget> {
 
                                       final user = await createAccountWithEmail(
                                         context,
-                                        emailAddressCreateController!.text,
-                                        passwordCreateController!.text,
+                                        _model
+                                            .emailAddressCreateController.text,
+                                        _model.passwordCreateController.text,
                                       );
                                       if (user == null) {
                                         return;
@@ -637,8 +639,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                                           .subtitle2
                                           .override(
                                             fontFamily: 'Outfit',
-                                            color: FlutterFlowTheme.of(context)
-                                                .primaryBtnText,
+                                            color: Colors.white,
                                             fontSize: 16,
                                             fontWeight: FontWeight.normal,
                                           ),
@@ -695,8 +696,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                                             .secondaryColor,
                                         icon: FaIcon(
                                           FontAwesomeIcons.google,
-                                          color: FlutterFlowTheme.of(context)
-                                              .primaryBtnText,
+                                          color: Colors.white,
                                           size: 24,
                                         ),
                                         onPressed: () async {
@@ -711,53 +711,53 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                                           context.goNamedAuth('Home', mounted);
                                         },
                                       ),
-                                      Container(
-                                        width: 50,
-                                        height: 50,
-                                        decoration: BoxDecoration(
-                                          color: Color(0xFFFF7A5A),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              blurRadius: 5,
-                                              color: Color(0x3314181B),
-                                              offset: Offset(0, 2),
-                                            )
-                                          ],
-                                          shape: BoxShape.circle,
-                                          border: Border.all(
-                                            color: Color(0xFFFF7A5A),
-                                          ),
-                                        ),
-                                        alignment: AlignmentDirectional(0, 0),
-                                        child: FaIcon(
+                                      FlutterFlowIconButton(
+                                        borderColor: Colors.transparent,
+                                        borderRadius: 60,
+                                        borderWidth: 1,
+                                        buttonSize: 50,
+                                        fillColor: FlutterFlowTheme.of(context)
+                                            .secondaryColor,
+                                        icon: FaIcon(
                                           FontAwesomeIcons.twitter,
                                           color: Colors.white,
                                           size: 24,
                                         ),
+                                        onPressed: () async {
+                                          GoRouter.of(context)
+                                              .prepareAuthEvent();
+                                          final user =
+                                              await signInWithGoogle(context);
+                                          if (user == null) {
+                                            return;
+                                          }
+
+                                          context.goNamedAuth('Home', mounted);
+                                        },
                                       ),
-                                      Container(
-                                        width: 50,
-                                        height: 50,
-                                        decoration: BoxDecoration(
-                                          color: Color(0xFFFF7A5A),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              blurRadius: 5,
-                                              color: Color(0x3314181B),
-                                              offset: Offset(0, 2),
-                                            )
-                                          ],
-                                          shape: BoxShape.circle,
-                                          border: Border.all(
-                                            color: Color(0xFFFF7A5A),
-                                          ),
-                                        ),
-                                        alignment: AlignmentDirectional(0, 0),
-                                        child: FaIcon(
+                                      FlutterFlowIconButton(
+                                        borderColor: Colors.transparent,
+                                        borderRadius: 60,
+                                        borderWidth: 1,
+                                        buttonSize: 50,
+                                        fillColor: FlutterFlowTheme.of(context)
+                                            .secondaryColor,
+                                        icon: FaIcon(
                                           FontAwesomeIcons.facebookF,
                                           color: Colors.white,
                                           size: 24,
                                         ),
+                                        onPressed: () async {
+                                          GoRouter.of(context)
+                                              .prepareAuthEvent();
+                                          final user =
+                                              await signInWithGoogle(context);
+                                          if (user == null) {
+                                            return;
+                                          }
+
+                                          context.goNamedAuth('Home', mounted);
+                                        },
                                       ),
                                     ],
                                   ),

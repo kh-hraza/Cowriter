@@ -4,6 +4,9 @@ import '../flutter_flow/flutter_flow_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import 'responses_model.dart';
+export 'responses_model.dart';
 
 class ResponsesWidget extends StatefulWidget {
   const ResponsesWidget({Key? key}) : super(key: key);
@@ -13,7 +16,24 @@ class ResponsesWidget extends StatefulWidget {
 }
 
 class _ResponsesWidgetState extends State<ResponsesWidget> {
+  late ResponsesModel _model;
+
   final scaffoldKey = GlobalKey<ScaffoldState>();
+
+  @override
+  void initState() {
+    super.initState();
+    _model = createModel(context, () => ResponsesModel());
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
+  }
+
+  @override
+  void dispose() {
+    _model.dispose();
+
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

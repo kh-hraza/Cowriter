@@ -78,16 +78,21 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
               appStateNotifier.loggedIn ? NavBarPage() : RegisterWidget(),
           routes: [
             FFRoute(
-              name: 'Logout',
-              path: 'logout',
-              builder: (context, params) => LogoutWidget(),
+              name: 'Home',
+              path: 'home',
+              builder: (context, params) => params.isEmpty
+                  ? NavBarPage(initialPage: 'Home')
+                  : HomeWidget(),
             ),
             FFRoute(
               name: 'Prompt',
               path: 'prompt',
-              builder: (context, params) => params.isEmpty
-                  ? NavBarPage(initialPage: 'Prompt')
-                  : PromptWidget(),
+              builder: (context, params) => NavBarPage(
+                initialPage: '',
+                page: PromptWidget(
+                  go: params.getParam('go', ParamType.String),
+                ),
+              ),
             ),
             FFRoute(
               name: 'Responses',
@@ -95,11 +100,12 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
               builder: (context, params) => ResponsesWidget(),
             ),
             FFRoute(
-              name: 'Home',
-              path: 'home',
-              builder: (context, params) => params.isEmpty
-                  ? NavBarPage(initialPage: 'Home')
-                  : HomeWidget(),
+              name: 'Results',
+              path: 'results',
+              builder: (context, params) => NavBarPage(
+                initialPage: '',
+                page: ResultsWidget(),
+              ),
             ),
             FFRoute(
               name: 'ThemeTest',
@@ -115,6 +121,13 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
               name: 'Register',
               path: 'register',
               builder: (context, params) => RegisterWidget(),
+            ),
+            FFRoute(
+              name: 'Settings',
+              path: 'settings',
+              builder: (context, params) => params.isEmpty
+                  ? NavBarPage(initialPage: 'Settings')
+                  : SettingsWidget(),
             )
           ].map((r) => r.toRoute(appStateNotifier)).toList(),
         ).toRoute(appStateNotifier),

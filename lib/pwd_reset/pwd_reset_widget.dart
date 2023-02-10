@@ -5,6 +5,9 @@ import '../flutter_flow/flutter_flow_util.dart';
 import '../flutter_flow/flutter_flow_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import 'pwd_reset_model.dart';
+export 'pwd_reset_model.dart';
 
 class PwdResetWidget extends StatefulWidget {
   const PwdResetWidget({Key? key}) : super(key: key);
@@ -14,18 +17,23 @@ class PwdResetWidget extends StatefulWidget {
 }
 
 class _PwdResetWidgetState extends State<PwdResetWidget> {
-  TextEditingController? emailAddressController;
+  late PwdResetModel _model;
+
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
     super.initState();
-    emailAddressController = TextEditingController();
+    _model = createModel(context, () => PwdResetModel());
+
+    _model.emailAddressController = TextEditingController();
+    WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
   }
 
   @override
   void dispose() {
-    emailAddressController?.dispose();
+    _model.dispose();
+
     super.dispose();
   }
 
@@ -78,7 +86,7 @@ class _PwdResetWidgetState extends State<PwdResetWidget> {
             Padding(
               padding: EdgeInsetsDirectional.fromSTEB(20, 24, 20, 0),
               child: TextFormField(
-                controller: emailAddressController,
+                controller: _model.emailAddressController,
                 obscureText: false,
                 decoration: InputDecoration(
                   labelText: 'Email Address',
@@ -124,7 +132,7 @@ class _PwdResetWidgetState extends State<PwdResetWidget> {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   filled: true,
-                  fillColor: FlutterFlowTheme.of(context).primaryBtnText,
+                  fillColor: Colors.white,
                   contentPadding:
                       EdgeInsetsDirectional.fromSTEB(20, 24, 20, 24),
                 ),
@@ -135,13 +143,15 @@ class _PwdResetWidgetState extends State<PwdResetWidget> {
                       fontWeight: FontWeight.normal,
                     ),
                 maxLines: null,
+                validator:
+                    _model.emailAddressControllerValidator.asValidator(context),
               ),
             ),
             Padding(
               padding: EdgeInsetsDirectional.fromSTEB(0, 24, 0, 0),
               child: FFButtonWidget(
                 onPressed: () async {
-                  if (emailAddressController!.text.isEmpty) {
+                  if (_model.emailAddressController.text.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(
@@ -152,7 +162,7 @@ class _PwdResetWidgetState extends State<PwdResetWidget> {
                     return;
                   }
                   await resetPassword(
-                    email: emailAddressController!.text,
+                    email: _model.emailAddressController.text,
                     context: context,
                   );
                 },

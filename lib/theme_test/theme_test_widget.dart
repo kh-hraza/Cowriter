@@ -7,6 +7,9 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:provider/provider.dart';
+import 'theme_test_model.dart';
+export 'theme_test_model.dart';
 
 class ThemeTestWidget extends StatefulWidget {
   const ThemeTestWidget({Key? key}) : super(key: key);
@@ -17,7 +20,24 @@ class ThemeTestWidget extends StatefulWidget {
 
 class _ThemeTestWidgetState extends State<ThemeTestWidget>
     with TickerProviderStateMixin {
+  late ThemeTestModel _model;
+
   final scaffoldKey = GlobalKey<ScaffoldState>();
+
+  @override
+  void initState() {
+    super.initState();
+    _model = createModel(context, () => ThemeTestModel());
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
+  }
+
+  @override
+  void dispose() {
+    _model.dispose();
+
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
